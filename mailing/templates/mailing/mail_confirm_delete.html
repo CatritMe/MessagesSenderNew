@@ -1,0 +1,22 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+<br>
+        <div class="col-12">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal"><font color="black">Удаление письма</font></h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="" class="form-floating" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <p><font color="black"> Хотите удалить письмо "{{object.topic}}"</font></p>
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-danger">Подтвердить</button>
+                        <a href="{% url 'mailing:mail_view' object.pk %}" class="btn btn-lg btn-block btn-outline-success">Отмена</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<br>
+<div class="col-12">
+  <div class="card mb-4 box-shadow">
+    <div class="card-header">
+      <h4 class="my-0 font-weight-normal"><font color="black">Добавить получателя</font></h4>
+    </div>
+    <div class="card-body">
+      <form method="post" action="" class="form-floating" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if object %}
+          <button type="submit" class="btn btn-sm btn-outline-success">Изменить</button>
+        {% else %}
+          <button type="submit" class="btn btn-sm btn-outline-success">Добавить</button>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

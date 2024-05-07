@@ -1,0 +1,15 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<main role="main" class="inner cover">
+        <h1 class="cover-heading">{{object.topic}}</h1>
+        <p class="lead">{{object.text}}</p>
+        <a href="{% url 'mailing:update_mail' object.pk %}" class="btn btn-sm btn-secondary">Скорректировать</a>
+        <a href="{% url 'mailing:delete_mail' object.pk %}" class="btn btn-sm btn-secondary">Удалить</a>
+</main>
+        <br>
+
+        <p class="lead">
+          <a href="#" class="btn btn-lg btn-secondary">Создать рассылку</a>
+        </p>
+</main>
+{% endblock %}
