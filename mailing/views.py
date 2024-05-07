@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from mailing.models import Client, Mail
+from mailing.models import Client, Mail, Mailing
 
 
 def index(request):
@@ -85,3 +85,37 @@ class MailDeleteView(DeleteView):
 
     # def get_success_url(self):
     #     return reverse_lazy('users:author_view', kwargs={'pk': self.object.author.pk})
+
+
+# CRUD для модели рассылок
+
+class MailingListView(ListView):
+    """Список всех рассылок"""
+    model = Mailing
+
+
+class MailingDetailView(DetailView):
+    """Информация о конкретной рассылке"""
+    model = Mailing
+
+
+class MailingCreateView(CreateView):
+    """Создание новой рассылки"""
+    model = Mailing
+    fields = ('name', 'mail', 'periodicity')
+    success_url = reverse_lazy('mailing:mailing_list')
+
+
+class MailingUpdateView(UpdateView):
+    """Изменение рассылки"""
+    model = Mailing
+    fields = ('name', 'mail', 'periodicity')
+
+    def get_success_url(self):
+        return reverse('mailing:mailing_view', args=[self.kwargs.get('pk')])
+
+
+class MailingDeleteView(DeleteView):
+    """Удаление рассылки"""
+    model = Mail
+    success_url = 'mailing:mailing_list'

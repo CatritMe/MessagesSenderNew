@@ -1,0 +1,27 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<br>
+<div class="col-12">
+  <div class="card mb-4 box-shadow">
+    <div class="card-header">
+        {% if object %}
+      <h4 class="my-0 font-weight-normal"><font color="black">Изменить рассылку</font></h4>
+        {% else %}
+        <h4 class="my-0 font-weight-normal"><font color="black">Создать рассылку</font></h4>
+        {% endif %}
+    </div>
+    <div class="card-body">
+      <form method="post" action="" class="form-floating" enctype="multipart/form-data">
+        {% csrf_token %}
+          <!<input type="hidden" name="author_id" value="{{ user.pk }}">>
+        {{ form.as_p }}
+        {% if object %}
+          <button type="submit" class="btn btn-sm btn-outline-success">Изменить</button>
+        {% else %}
+          <button type="submit" class="btn btn-sm btn-outline-success">Создать</button>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

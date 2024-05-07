@@ -22,7 +22,7 @@
         <div class="inner">
           <h3 class="masthead-brand">MessagesSender</h3>
           <nav class="nav nav-masthead justify-content-end">
-            <a class="nav-link" href="#">Рассылки</a>
+            <a class="nav-link" href="{% url 'mailing:mailing_list' %}">Рассылки</a>
             <a class="nav-link" href="{% url 'mailing:mail_list' %}">Письма</a>
             <a class="nav-link" href="{% url 'mailing:client_list' %}">Получатели</a>
           </nav>

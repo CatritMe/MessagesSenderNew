@@ -1,0 +1,12 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<main role="main" class="inner cover">
+        <h1 class="cover-heading">{{object.name}}</h1>
+        <p class="lead">{{object.created_at}}</p>
+    <p class="lead">{{object.mail}}</p>
+    <p class="lead">{{object.status}}</p>
+    <p class="lead">{{object.periodicity}}</p>
+        <a href="{% url 'mailing:update_mailing' object.pk %}" class="btn btn-sm btn-secondary">Скорректировать</a>
+        <a href="{% url 'mailing:delete_mailing' object.pk %}" class="btn btn-sm btn-secondary">Удалить</a>
+</main>
+{% endblock %}
