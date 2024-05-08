@@ -5,7 +5,7 @@ from mailing.models import Client, Mail, Mailing
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'mailing',)
+    list_display = ('name', 'email',)
     list_filter = ('name', 'email',)
 
 

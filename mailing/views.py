@@ -1,8 +1,12 @@
+from django.core.mail import send_mail
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from config.settings import EMAIL_HOST_USER
+from mailing.forms import MailingForm, MailForm, ClientForm
 from mailing.models import Client, Mail, Mailing
+from mailing.services import send_mailing
 
 
 def index(request):
@@ -10,7 +14,7 @@ def index(request):
     return render(request, 'mailing/index.html')
 
 
-# CRUD для модели получателя
+# CRUD для модели получателя-------------------------------------------------------------------------
 
 
 class ClientListView(ListView):
@@ -26,14 +30,14 @@ class ClientDetailView(DetailView):
 class ClientCreateView(CreateView):
     """Создание нового получателя"""
     model = Client
-    fields = ('name', 'email', 'comment',)
+    form_class = ClientForm
     success_url = reverse_lazy('mailing:client_list')
 
 
 class ClientUpdateView(UpdateView):
     """Изменение получателя"""
     model = Client
-    fields = ('name', 'email', 'comment',)
+    form_class = ClientForm
     success_url = reverse_lazy('mailing:client_list')
 
 
@@ -42,7 +46,7 @@ class ClientDeleteView(DeleteView):
     model = Client
     success_url = reverse_lazy('mailing:client_list')
 
-# CRUD для модели письма-сообщения
+# CRUD для модели письма-сообщения-------------------------------------------------------------------------
 
 
 class MailListView(ListView):
@@ -57,11 +61,8 @@ class MailDetailView(DetailView):
 class MailCreateView(CreateView):
     """Создание нового письма"""
     model = Mail
-    fields = ('topic', 'text',)
+    form_class = MailForm
     success_url = reverse_lazy('mailing:mail_list')
-
-    # def get_success_url(self):
-    #     return reverse('mailing:mail_view', args=[self.kwargs.get('pk')])
 
     # def get_context_data(self, **kwargs):
     #     context_data = super().get_context_data(**kwargs)
@@ -72,7 +73,7 @@ class MailCreateView(CreateView):
 class MailUpdateView(UpdateView):
     """Изменение сообщения"""
     model = Mail
-    fields = ('topic', 'text',)
+    form_class = MailForm
 
     def get_success_url(self):
         return reverse('mailing:mail_view', args=[self.kwargs.get('pk')])
@@ -83,11 +84,8 @@ class MailDeleteView(DeleteView):
     model = Mail
     success_url = 'mailing:mail_list'
 
-    # def get_success_url(self):
-    #     return reverse_lazy('users:author_view', kwargs={'pk': self.object.author.pk})
 
-
-# CRUD для модели рассылок
+# CRUD для модели рассылок-----------------------------------------------------------------------------
 
 class MailingListView(ListView):
     """Список всех рассылок"""
@@ -102,14 +100,22 @@ class MailingDetailView(DetailView):
 class MailingCreateView(CreateView):
     """Создание новой рассылки"""
     model = Mailing
-    fields = ('name', 'mail', 'periodicity')
+    form_class = MailingForm
     success_url = reverse_lazy('mailing:mailing_list')
+
+    def form_valid(self, form):
+        """Отправка рассылки"""
+        mailing = form.save()
+        mailing.status = 'создана'
+        mailing.save()
+        send_mailing()
+        return super().form_valid(form)
 
 
 class MailingUpdateView(UpdateView):
     """Изменение рассылки"""
     model = Mailing
-    fields = ('name', 'mail', 'periodicity')
+    form_class = MailingForm
 
     def get_success_url(self):
         return reverse('mailing:mailing_view', args=[self.kwargs.get('pk')])
@@ -117,5 +123,5 @@ class MailingUpdateView(UpdateView):
 
 class MailingDeleteView(DeleteView):
     """Удаление рассылки"""
-    model = Mail
-    success_url = 'mailing:mailing_list'
+    model = Mailing
+    success_url = reverse_lazy('mailing:mailing_list')
