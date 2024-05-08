@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
@@ -17,31 +18,39 @@ def index(request):
 # CRUD для модели получателя-------------------------------------------------------------------------
 
 
-class ClientListView(ListView):
+class ClientListView(LoginRequiredMixin, ListView):
     """Список клиентов-получателей"""
     model = Client
 
 
-class ClientDetailView(DetailView):
+class ClientDetailView(LoginRequiredMixin, DetailView):
     """Информация по конкретному получателю"""
     model = Client
 
 
-class ClientCreateView(CreateView):
+class ClientCreateView(LoginRequiredMixin, CreateView):
     """Создание нового получателя"""
     model = Client
     form_class = ClientForm
     success_url = reverse_lazy('mailing:client_list')
 
+    def form_valid(self, form):
+        """Привязка получателя к создавшему пользователю"""
+        client = form.save()
+        user = self.request.user
+        client.user = user
+        client.save()
+        return super().form_valid(form)
 
-class ClientUpdateView(UpdateView):
+
+class ClientUpdateView(LoginRequiredMixin, UpdateView):
     """Изменение получателя"""
     model = Client
     form_class = ClientForm
     success_url = reverse_lazy('mailing:client_list')
 
 
-class ClientDeleteView(DeleteView):
+class ClientDeleteView(LoginRequiredMixin, DeleteView):
     """Удаление получателя"""
     model = Client
     success_url = reverse_lazy('mailing:client_list')
@@ -49,28 +58,31 @@ class ClientDeleteView(DeleteView):
 # CRUD для модели письма-сообщения-------------------------------------------------------------------------
 
 
-class MailListView(ListView):
+class MailListView(LoginRequiredMixin, ListView):
     model = Mail
 
 
-class MailDetailView(DetailView):
+class MailDetailView(LoginRequiredMixin, DetailView):
     """Информация о конкретном сообщении"""
     model = Mail
 
 
-class MailCreateView(CreateView):
+class MailCreateView(LoginRequiredMixin, CreateView):
     """Создание нового письма"""
     model = Mail
     form_class = MailForm
     success_url = reverse_lazy('mailing:mail_list')
 
-    # def get_context_data(self, **kwargs):
-    #     context_data = super().get_context_data(**kwargs)
-    #     context_data['author'] = get_object_or_404(User, pk=self.kwargs.get('pk'))
-    #     return context_data
+    def form_valid(self, form):
+        """Привязка сообщения к создавшему пользователю"""
+        mail = form.save()
+        user = self.request.user
+        mail.user = user
+        mail.save()
+        return super().form_valid(form)
 
 
-class MailUpdateView(UpdateView):
+class MailUpdateView(LoginRequiredMixin, UpdateView):
     """Изменение сообщения"""
     model = Mail
     form_class = MailForm
@@ -79,7 +91,7 @@ class MailUpdateView(UpdateView):
         return reverse('mailing:mail_view', args=[self.kwargs.get('pk')])
 
 
-class MailDeleteView(DeleteView):
+class MailDeleteView(LoginRequiredMixin, DeleteView):
     """Удаление сообщения"""
     model = Mail
     success_url = 'mailing:mail_list'
@@ -87,32 +99,40 @@ class MailDeleteView(DeleteView):
 
 # CRUD для модели рассылок-----------------------------------------------------------------------------
 
-class MailingListView(ListView):
+class MailingListView(LoginRequiredMixin, ListView):
     """Список всех рассылок"""
     model = Mailing
 
 
-class MailingDetailView(DetailView):
+class MailingDetailView(LoginRequiredMixin, DetailView):
     """Информация о конкретной рассылке"""
     model = Mailing
 
 
-class MailingCreateView(CreateView):
+class MailingCreateView(LoginRequiredMixin, CreateView):
     """Создание новой рассылки"""
     model = Mailing
     form_class = MailingForm
     success_url = reverse_lazy('mailing:mailing_list')
 
     def form_valid(self, form):
-        """Отправка рассылки"""
+        """Привязка рассылки к создавшему пользователю"""
         mailing = form.save()
-        mailing.status = 'создана'
+        user = self.request.user
+        mailing.user = user
         mailing.save()
-        send_mailing()
         return super().form_valid(form)
 
+    # def form_valid(self, form):
+    #     """Отправка рассылки"""
+    #     mailing = form.save()
+    #     mailing.status = 'создана'
+    #     mailing.save()
+    #     send_mailing()
+    #     return super().form_valid(form)
 
-class MailingUpdateView(UpdateView):
+
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
     """Изменение рассылки"""
     model = Mailing
     form_class = MailingForm
@@ -121,7 +141,7 @@ class MailingUpdateView(UpdateView):
         return reverse('mailing:mailing_view', args=[self.kwargs.get('pk')])
 
 
-class MailingDeleteView(DeleteView):
+class MailingDeleteView(LoginRequiredMixin, DeleteView):
     """Удаление рассылки"""
     model = Mailing
     success_url = reverse_lazy('mailing:mailing_list')

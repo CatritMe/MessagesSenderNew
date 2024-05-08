@@ -2,6 +2,8 @@
 from django.db import models
 from django.utils import timezone
 
+from users.models import User
+
 NULLABLE = {'blank': True, 'null': True}
 
 
@@ -10,6 +12,7 @@ class Client(models.Model):
     email = models.EmailField(verbose_name='email', unique=True)
     name = models.CharField(max_length=50, verbose_name='ФИО')
     comment = models.TextField(verbose_name='комментарий')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь', **NULLABLE)
 
     def __str__(self):
         return f'{self.email}'
@@ -23,6 +26,7 @@ class Mail(models.Model):
     """Модель сообщения для рассылки"""
     topic = models.CharField(max_length=50, verbose_name='тема')
     text = models.TextField(verbose_name='тело письма')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь', **NULLABLE)
 
     def __str__(self):
         return f'{self.topic}'
@@ -49,6 +53,7 @@ class Mailing(models.Model):
     periods = [(DAY, 'раз в день'), (WEEK, 'раз в неделю'), (MONTH, 'раз в месяц'), ]
     periodicity = models.CharField(max_length=2, choices=periods, default=MONTH)
     client = models.ManyToManyField(Client, verbose_name='получатели')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь', **NULLABLE)
 
     # def is_upperstatus(self):
     #     return self.status in (self.CREATED, self.STARTED, self.FINISHED)
@@ -69,7 +74,7 @@ class MailingAttempt(models.Model):
     answer = models.TextField(verbose_name='ответ почтового сервера')
 
     def __str__(self):
-        return self.is_success
+        return f'{self.is_success}'
 
     class Meta:
         verbose_name = 'попытка рассылки'

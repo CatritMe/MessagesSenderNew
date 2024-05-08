@@ -2,7 +2,9 @@
 
 {% block content %}
 <main>
+    {% if user.is_authenticated %}
     <a href="{% url 'mailing:create_client'%}" type="button" class="btn btn-sm btn-outline-light">Добавить получателя</a>
+    {% endif %}
     <br>
     {% for object in object_list %}
     <br>
