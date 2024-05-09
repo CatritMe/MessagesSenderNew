@@ -83,6 +83,3 @@ class MailingAttempt(models.Model):
     class Meta:
         verbose_name = 'попытка рассылки'
         verbose_name_plural = 'попытки рассылки'
-
-
-

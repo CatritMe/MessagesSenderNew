@@ -4,14 +4,13 @@
 <div class="col-12">
   <div class="card mb-4 box-shadow">
     <div class="card-header">
-      <h4 class="my-0 font-weight-normal"><font color="black">Вход</font></h4>
+      <h4 class="my-0 font-weight-normal"><font color="black">Редактирование профиля</font></h4>
     </div>
     <div class="card-body">
       <form method="post" action="" class="form-floating" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-          <button type="submit" class="btn btn-sm btn-outline-success">Войти</button>
-        <a href="{% url 'users:gen_password' %}" type="button" class="btn btn-sm btn-outline-success">Забыли пароль?</a>
+          <button type="submit" class="btn btn-sm btn-outline-success">Сохранить</button>
       </form>
     </div>
   </div>

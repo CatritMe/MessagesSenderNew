@@ -1,23 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
-from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from config.settings import EMAIL_HOST_USER
 from mailing.forms import MailingForm, MailForm, ClientForm, MailingManagerForm
 from mailing.models import Client, Mail, Mailing
-from mailing.services import send_mailing
-
-
-def index(request):
-    """главная страница"""
-    return render(request, 'mailing/index.html')
 
 
 # CRUD для модели получателя-------------------------------------------------------------------------
-
 
 class ClientListView(LoginRequiredMixin, ListView):
     """Список клиентов-получателей"""
@@ -60,6 +50,7 @@ class ClientDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class MailListView(LoginRequiredMixin, ListView):
+    """Просмотр списка сообщений"""
     model = Mail
 
 
@@ -89,6 +80,7 @@ class MailUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MailForm
 
     def get_success_url(self):
+        """Возврат на то же сообщение после редактирования"""
         return reverse('mailing:mail_view', args=[self.kwargs.get('pk')])
 
 

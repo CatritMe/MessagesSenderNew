@@ -6,18 +6,13 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, DetailView, UpdateView, ListView
+from django.views.generic import CreateView, UpdateView, ListView
 
 from config.settings import EMAIL_HOST_USER
 from users.forms import UserRegisterForm, UserProfileForm, UserManagerForm
 from users.models import User
 
 CHARS = '+-*!&$#?=@abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-
-
-class UserDetailView(DetailView):
-    """Просмотр информации о конкретном пользователе"""
-    model = User
 
 
 class UserCreateView(CreateView):
@@ -48,7 +43,7 @@ class ProfileView(UpdateView):
     """Редактирование профиля пользователя"""
     model = User
     form_class = UserProfileForm
-    success_url = reverse_lazy('users:profile')
+    success_url = reverse_lazy('blogs:home')
     template_name = 'users/profile.html'
 
     def get_object(self, queryset=None):
@@ -85,6 +80,7 @@ def generate_new_password(request):
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
+    """Блокировка пользователя (только для модераторов)"""
     model = User
     form_class = UserManagerForm
     success_url = reverse_lazy('users:user_list')
@@ -98,4 +94,5 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class UserListView(LoginRequiredMixin, ListView):
+    """Просмотр списка пользователей (только для модератора)"""
     model = User

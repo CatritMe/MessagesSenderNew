@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 django-apscheduler = "^0.6.2"
 django = "4.2.2"
+redis = "^5.0.4"
 
 
 [build-system]
