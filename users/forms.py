@@ -24,3 +24,11 @@ class UserProfileForm(UserChangeForm):
         super().__init__(*args, **kwargs)
 
         self.fields['password'].widget = forms.HiddenInput()
+
+
+class UserManagerForm(UserChangeForm):
+    """Форма редактирования пользователя модератором"""
+
+    class Meta:
+        model = User
+        fields = ('is_active',)

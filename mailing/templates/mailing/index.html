@@ -1,1 +1,40 @@
 {% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<br>
+ <main class="px-3">
+    <h1>Сервис по отправке рассылок.</h1>
+     {% if not user.is_authenticated %}
+    <p class="lead">Для начала работы войдите или зарегистрируйтесь</p>
+     {% else %}
+     <p class="lead">Общее количество рассылок: {{ mailings_count }}</p>
+    <p class="lead">Количество активных рассылок: {{ active_mailings_count }}</p>
+     <p class="lead">Количество уникальных клиентов для рассылок: {{ clients_count }}</p>
+     {% endif %}
+  </main>
+<div class="container">
+    <h2>Самые новые новости</h2>
+    <div class="row text-center">
+        {% for blog in blog_list %}
+        <div class="col-4">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">{{blog.title}}</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>Написано {{blog.created_at}}</li>
+                        <li>{{blog.text | truncatechars:50}}</li>
+                    </ul>
+                    <img class="img-fluid" src="{{ blog.avatar| mymedia }}" alt="Responsive image">
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>Количество просмотров {{blog.views_count}}</li>
+                    </ul>
+                    <a href="{% url 'blogs:blog_view' blog.pk %}" type="button" class="btn btn-lg btn-block btn-outline-dark">Читать</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

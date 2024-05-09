@@ -1,13 +1,15 @@
 import random
 import secrets
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView, ListView
 
 from config.settings import EMAIL_HOST_USER
-from users.forms import UserRegisterForm, UserProfileForm
+from users.forms import UserRegisterForm, UserProfileForm, UserManagerForm
 from users.models import User
 
 CHARS = '+-*!&$#?=@abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
@@ -80,3 +82,20 @@ def generate_new_password(request):
         user.save()
         return redirect(reverse('users:login'))
     return render(request, 'users/gen_password.html')
+
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserManagerForm
+    success_url = reverse_lazy('users:user_list')
+
+    def get_form_class(self):
+        """Выбор формы для модераторов"""
+        user = self.request.user
+        if user.has_perm("users.can_edit_is_active"):
+            return UserManagerForm
+        raise PermissionDenied
+
+
+class UserListView(LoginRequiredMixin, ListView):
+    model = User

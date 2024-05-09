@@ -1,0 +1,22 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<br>
+<main role="main" class="inner cover">
+       <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">{{object.title}}</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>Написано {{object.created_at}}</li>
+                        <li>{{object.text}}</li>
+                    </ul>
+                    <img class="img-fluid" src="{{ object.avatar| mymedia }}" alt="Responsive image">
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>Количество просмотров {{object.views_count}}</li>
+                    </ul>
+                </div>
+            </div>
+</main>
+{% endblock %}

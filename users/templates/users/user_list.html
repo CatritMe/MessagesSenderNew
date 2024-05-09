@@ -2,13 +2,10 @@
 
 {% block content %}
 <main>
-    <a href="{% url 'mailing:create_mail'%}" type="button" class="btn btn-sm btn-outline-light">Добавить сообщение</a>
-    <br>
     {% for object in object_list %}
-    {% if user == object.user %}
     <br>
     <nav class="navbar navbar-expand navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'mailing:mail_view' object.pk %}">{{object.topic}}</a>
+        <a class="navbar-brand" href="#">{{object.email}}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -16,18 +13,20 @@
       <div class="collapse navbar-collapse" id="navbarsExample02">
         <ul class="navbar-nav mr-auto align-content-end">
           <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              {% if object.is_active %}
+            <a class="nav-link" href="#">Активен <span class="sr-only">(current)</span></a>
+              {% else %}
+              <a class="nav-link" href="#">Заблокирован <span class="sr-only">(current)</span></a>
+              {% endif %}
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'mailing:update_mail' object.pk %}">Изменить</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'mailing:delete_mail' object.pk %}">Удалить</a>
+              {% if object.is_active %}
+            <a class="nav-link" href="{% url 'users:block_user' object.pk %}">Заблокировать</a>
+              {% endif %}
           </li>
         </ul>
       </div>
     </nav>
-    {% endif %}
-    {% endfor %}
 </main>
+  {% endfor %}
 {% endblock %}

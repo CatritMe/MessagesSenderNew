@@ -37,3 +37,11 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Mailing
         exclude = ('status', 'user',)
+
+
+class MailingManagerForm(StyleFormMixin, forms.ModelForm):
+    """Форма для редактирования сообщения"""
+
+    class Meta:
+        model = Mailing
+        fields = ('status',)

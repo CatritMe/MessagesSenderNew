@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from config.settings import EMAIL_HOST_USER
-from mailing.forms import MailingForm, MailForm, ClientForm
+from mailing.forms import MailingForm, MailForm, ClientForm, MailingManagerForm
 from mailing.models import Client, Mail, Mailing
 from mailing.services import send_mailing
 
@@ -123,14 +124,6 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         mailing.save()
         return super().form_valid(form)
 
-    # def form_valid(self, form):
-    #     """Отправка рассылки"""
-    #     mailing = form.save()
-    #     mailing.status = 'создана'
-    #     mailing.save()
-    #     send_mailing()
-    #     return super().form_valid(form)
-
 
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
     """Изменение рассылки"""
@@ -138,7 +131,17 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MailingForm
 
     def get_success_url(self):
+        """Возврат на страницу редактируемой рассылки"""
         return reverse('mailing:mailing_view', args=[self.kwargs.get('pk')])
+
+    def get_form_class(self):
+        """Выбор формы для разных прав доступа"""
+        user = self.request.user
+        if user == self.object.user:
+            return MailingForm
+        if user.has_perm("mailing.can_edit_status"):
+            return MailingManagerForm
+        raise PermissionDenied
 
 
 class MailingDeleteView(LoginRequiredMixin, DeleteView):

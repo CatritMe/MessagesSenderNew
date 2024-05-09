@@ -64,6 +64,10 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = 'рассылка'
         verbose_name_plural = 'рассылки'
+        """Может отключать рассылки."""
+        permissions = [
+            ('can_edit_status', 'can edit status')
+        ]
 
 
 class MailingAttempt(models.Model):

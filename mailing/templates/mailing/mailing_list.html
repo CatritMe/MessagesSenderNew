@@ -5,6 +5,7 @@
     <a href="{% url 'mailing:create_mailing'%}" type="button" class="btn btn-sm btn-outline-light">Создать рассылку</a>
     <br>
     {% for object in object_list %}
+    {% if user == object.user %}
     <br>
     <nav class="navbar navbar-expand navbar-light bg-light">
         <a class="navbar-brand" href="{% url 'mailing:mailing_view' object.pk %}">{{object.name}}</a>
@@ -26,6 +27,7 @@
         </ul>
       </div>
     </nav>
+    {% endif %}
+    {% endfor %}
 </main>
-  {% endfor %}
 {% endblock %}
